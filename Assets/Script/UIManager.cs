@@ -6,12 +6,12 @@ public class UIManager : MonoBehaviour
 {
     [SerializeField] public PokemonUI pokemonUI1;
     [SerializeField] public PokemonUI pokemonUI2;
-    [SerializeField] GameObject levelGO;
-    TMP_InputField levelInput;
+    [SerializeField] TextMeshProUGUI levelInput;
     [SerializeField] GameObject startButton;
     [SerializeField] GameObject midUI;
     TextMeshProUGUI[] tmps;
     [SerializeField] TextMeshProUGUI tour;
+    [Range(1f, 100f)]
     private int level = 1;
     public void PreFightVisual(Pokemon[] pokemons)
     {
@@ -20,11 +20,12 @@ public class UIManager : MonoBehaviour
         StartCoroutine(pokemonUI2.Init(pokemons[1]));
         StartCoroutine(InitMidUI());
         startButton.SetActive(false);
-        levelGO.SetActive(false);
     }
 
     private void ResetAll()
     {
+        pokemonUI1.ResetAll();
+        pokemonUI2.ResetAll();
     }
 
     public void FightVisual()
@@ -34,9 +35,9 @@ public class UIManager : MonoBehaviour
 
     public void PostFightVisual()
     {
+        ResetAll();
         tour.text = "";
         startButton.SetActive(true);
-        levelGO.SetActive(true);
     }
 
     public void IncrementTurn(int turn)
@@ -101,12 +102,6 @@ public class UIManager : MonoBehaviour
             if (tmp == tour) continue;
             tmp.enabled = false;
         }
-    }
-
-    public void OnLevelChange()
-    {
-        if (levelInput == null) levelInput = levelGO.GetComponent<TMP_InputField>();
-        level = int.Parse(levelInput.text);
     }
 
     public int GetLevel()

@@ -9,13 +9,9 @@ public class PokemonFight : MonoBehaviour
     List<Pokemon> pokemonList;
     Pokemon firstPokemon;
     Pokemon secondPokemon;
-    PokemonList pokemonListClass;
     [SerializeField] UIManager uiManager;
+    [SerializeField] GameObject fichePokemon; 
 
-    public void Awake()
-    {
-        pokemonListClass = new PokemonList();
-    }
     public void StartFight()
     {
         StartCoroutine(PreFight());
@@ -23,10 +19,9 @@ public class PokemonFight : MonoBehaviour
 
     private IEnumerator PreFight()
     {
+        fichePokemon.SetActive(false);
         ChooseTwoPokemons();
-        firstPokemon.PostInit(uiManager.GetLevel());
-        secondPokemon.PostInit(uiManager.GetLevel());
-        GameObject.Find("Pokemons").GetComponent<UIManager>().PreFightVisual(new Pokemon[] { firstPokemon, secondPokemon });
+        uiManager.PreFightVisual(new Pokemon[] { firstPokemon, secondPokemon });
         yield return new WaitForSeconds(5);
         StartCoroutine(Fight());
     }
@@ -35,25 +30,25 @@ public class PokemonFight : MonoBehaviour
     {
         uiManager.FightVisual();
         int turn = 0;
-        while (firstPokemon.GetHealth() > 0 && secondPokemon.GetHealth() > 0)
+        while (firstPokemon.CurrentHealth > 0 && secondPokemon.CurrentHealth > 0)
         {
             turn++;
             if (turn % 2 == 1) //FIRST POKEMON
             {
-                Debug.Log("------ TURN " + turn / 2 + "------");
-                uiManager.IncrementTurn(turn / 2 + 1);
+                Debug.Log("------ TURN " + (turn + 1) / 2 + "------");
+                uiManager.IncrementTurn((turn + 1) / 2);
                 uiManager.DamageAnimation(secondPokemon);
-                firstPokemon.Attack(secondPokemon);
-                uiManager.pokemonUI2.OnHealthChange(secondPokemon.GetHealth());
+                firstPokemon.AttackPokemon(secondPokemon);
+                uiManager.pokemonUI2.OnHealthChange(secondPokemon.CurrentHealth);
                 yield return new WaitForSeconds(2);
                 
             }
             else if (turn % 2 == 0) //SECOND POKEMON
             {
-                uiManager.IncrementTurn(turn / 2 + 1);
-                secondPokemon.Attack(firstPokemon);
+                uiManager.IncrementTurn((turn + 1 )/ 2);
+                secondPokemon.AttackPokemon(firstPokemon);
                 uiManager.DamageAnimation(firstPokemon);
-                uiManager.pokemonUI1.OnHealthChange(firstPokemon.GetHealth());
+                uiManager.pokemonUI1.OnHealthChange(firstPokemon.CurrentHealth);
                 yield return new WaitForSeconds(2);
             }
         }
@@ -63,24 +58,24 @@ public class PokemonFight : MonoBehaviour
 
     private void PostFight(Pokemon winner)
     {
-        Debug.Log($"{winner.GetName()} gagne le combat!");
+        Debug.Log($"{winner.Name} gagne le combat!");
         uiManager.PostFightVisual();
+        fichePokemon.SetActive(true);
     }
 
-    private void ChooseTwoPokemons()
+    private async void ChooseTwoPokemons()
     {
-        Pokemon pokemon1;
-        Pokemon pokemon2;
-        pokemonList = pokemonListClass.LoadPokemons();
+        pokemonList = await PokemonList.Instance.LoadPokemons(10000);
         List<Pokemon> pokemonListModifiable = new(pokemonList);
-        int rng = Random.Range(0, pokemonListModifiable.Count);
-        pokemon1 = pokemonListModifiable[rng];
+        Pokemon pokemon1 = fichePokemon.GetComponent<PokemonFiche>().ActualPokemon;
+        Pokemon pokemon2;
         pokemonListModifiable.Remove(pokemon1);
         if(pokemonListModifiable.Count != 0)
         {
-            rng = Random.Range(0, pokemonListModifiable.Count);
+            int rng = Random.Range(0, pokemonListModifiable.Count);
             pokemon2 = pokemonListModifiable[rng];
-            if (pokemon1.GetSpeed() > pokemon2.GetSpeed())
+            pokemon2.UpdateLevel(pokemon1.Level);
+            if (pokemon1.ScaledStats.Speed > pokemon2.ScaledStats.Speed)
             {
                 firstPokemon = pokemon1;
                 secondPokemon = pokemon2;

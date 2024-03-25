@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class TypeMultiplier
 {
+    // STRUCT OR MATRIX
     //EFFECTIVEATTACK
     readonly Dictionary<Pokemon.PokemonType, Pokemon.PokemonType[]> effectiveAttack = new()
     {
