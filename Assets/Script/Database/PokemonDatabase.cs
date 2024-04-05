@@ -9,12 +9,12 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-public class PokemonList : MonoBehaviour
+
+public class PokemonDatabase : MonoBehaviour
 {
-    [SerializeField] private PokemonFiche fiche;
-    public static PokemonList Instance { get; private set; }
-    [SerializeField] private List<Pokemon> unsortedPokemon = new();
-    public List<Pokemon> SortedPokemon { get; private set; } = new();
+    public static PokemonDatabase Instance { get; private set; }
+    private List<Pokemon> unsortedPokemon = new();
+    [field: SerializeField] public List<Pokemon> SortedPokemon { get; private set; } = new();
     [SerializeField] GameObject loadingScreen;
     [SerializeField] TextMeshProUGUI loadingLogText;
     [SerializeField] Image pokeballLoading;
@@ -74,7 +74,6 @@ public class PokemonList : MonoBehaviour
     async Task GetPokemon(string url)
     {
         //Debug.Log("Entering GetPokemon");
-        //Debug.Log("Entering GetPokemon");
         using WebClient client = new();
         try
         {
@@ -91,8 +90,8 @@ public class PokemonList : MonoBehaviour
                                   tempPokemon.stats[4].base_stat,
                                   tempPokemon.stats[5].base_stat,
                                   tempPokemon.sprites.front_default,
-                                  Enum.Parse<Pokemon.PokemonType>(tempPokemon.types[0].type.name.FirstCharacterToUpper()),
-                                  Enum.Parse<Pokemon.PokemonType>(tempPokemon.types[1].type.name.FirstCharacterToUpper()));
+                                  Enum.Parse<ElementalType>(tempPokemon.types[0].type.name.FirstCharacterToUpper()),
+                                  Enum.Parse<ElementalType>(tempPokemon.types[1].type.name.FirstCharacterToUpper()));
             unsortedPokemon.Add(pokemon);
             //Debug.Log("Exiting GetPokemon");
         }

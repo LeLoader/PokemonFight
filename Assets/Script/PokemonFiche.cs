@@ -49,7 +49,7 @@ public class PokemonFiche : MonoBehaviour
     {
         
         Load10.transform.parent.transform.parent.gameObject.SetActive(false);
-        pokemonList = await PokemonList.Instance.LoadPokemons(howMany);
+        pokemonList = await PokemonDatabase.Instance.LoadPokemons(howMany);
         CheckPage();
         gotoPlaceholder.text = $"Enter ID (1 - {pokemonList.Count})";
         GetAndSetPokemon(0);

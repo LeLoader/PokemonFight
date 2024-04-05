@@ -12,7 +12,7 @@ public class PokemonUI : MonoBehaviour
     [SerializeField] string attack;
     [SerializeField] string defense;
     [SerializeField] string speed;
-    [SerializeField] Pokemon.PokemonType[] types;
+    [SerializeField] ElementalType[] types;
     [SerializeField] GameObject healthBar;
     [SerializeField] Slider healthSlider;
     [SerializeField] RawImage pokemonImage;
@@ -63,7 +63,7 @@ public class PokemonUI : MonoBehaviour
 
                 case "Types":
                     types = pokemon.GetType();
-                    if (types[1] == Pokemon.PokemonType.None) tmp.text = types[0].ToString();
+                    if (types[1] == ElementalType.None) tmp.text = types[0].ToString();
                     else tmp.text = types[0].ToString() + ", " + types[1].ToString();
                     yield return new WaitForSeconds(0.5f);
                     break;

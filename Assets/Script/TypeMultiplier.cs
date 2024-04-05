@@ -5,66 +5,88 @@ using UnityEngine;
 
 public class TypeMultiplier
 {
+    Type mult2 = new Type
+    {
+
+    };
+
     // STRUCT OR MATRIX
     //EFFECTIVEATTACK
-    readonly Dictionary<Pokemon.PokemonType, Pokemon.PokemonType[]> effectiveAttack = new()
+    readonly Dictionary<ElementalType, ElementalType[]> effectiveAttack = new()
     {
-        {Pokemon.PokemonType.Normal, new Pokemon.PokemonType[]{}},
-        {Pokemon.PokemonType.Fire, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Grass, Pokemon.PokemonType.Ice, Pokemon.PokemonType.Bug, Pokemon.PokemonType.Steel}},
-        {Pokemon.PokemonType.Water, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Fire, Pokemon.PokemonType.Ground, Pokemon.PokemonType.Rock}},
-        {Pokemon.PokemonType.Grass, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Water, Pokemon.PokemonType.Ground, Pokemon.PokemonType.Rock}},
-        {Pokemon.PokemonType.Electric, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Water, Pokemon.PokemonType.Flying}},
-        {Pokemon.PokemonType.Ice, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Electric, Pokemon.PokemonType.Ground, Pokemon.PokemonType.Flying, Pokemon.PokemonType.Dragon}},
-        {Pokemon.PokemonType.Fighting, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Normal, Pokemon.PokemonType.Ice, Pokemon.PokemonType.Rock, Pokemon.PokemonType.Dark, Pokemon.PokemonType.Steel}},
-        {Pokemon.PokemonType.Poison, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Grass}},
-        {Pokemon.PokemonType.Ground, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Fire, Pokemon.PokemonType.Electric, Pokemon.PokemonType.Poison, Pokemon.PokemonType.Rock, Pokemon.PokemonType.Steel}},
-        {Pokemon.PokemonType.Flying, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Grass, Pokemon.PokemonType.Fighting, Pokemon.PokemonType.Bug}},
-        {Pokemon.PokemonType.Psychic, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Fighting, Pokemon.PokemonType.Poison}},
-        {Pokemon.PokemonType.Bug, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Grass, Pokemon.PokemonType.Psychic, Pokemon.PokemonType.Dark}},
-        {Pokemon.PokemonType.Rock, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Fire, Pokemon.PokemonType.Ice, Pokemon.PokemonType.Flying, Pokemon.PokemonType.Bug}},
-        {Pokemon.PokemonType.Ghost, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Psychic, Pokemon.PokemonType.Ghost}},
-        {Pokemon.PokemonType.Dragon, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Dragon}},
-        {Pokemon.PokemonType.Dark, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Psychic, Pokemon.PokemonType.Ghost}},
-        {Pokemon.PokemonType.Steel, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Ice, Pokemon.PokemonType.Rock}},
-        {Pokemon.PokemonType.Fairy, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Fighting, Pokemon.PokemonType.Dark, Pokemon.PokemonType.Dragon}},
+        {ElementalType.Normal, new ElementalType[]{}},
+        {ElementalType.Fire, new ElementalType[]{ ElementalType.Grass, ElementalType.Ice, ElementalType.Bug, ElementalType.Steel}},
+        {ElementalType.Water, new ElementalType[]{ ElementalType.Fire, ElementalType.Ground, ElementalType.Rock}},
+        {ElementalType.Grass, new ElementalType[]{ ElementalType.Water, ElementalType.Ground, ElementalType.Rock}},
+        {ElementalType.Electric, new ElementalType[]{ ElementalType.Water, ElementalType.Flying}},
+        {ElementalType.Ice, new ElementalType[]{ ElementalType.Electric, ElementalType.Ground, ElementalType.Flying, ElementalType.Dragon}},
+        {ElementalType.Fighting, new ElementalType[]{ ElementalType.Normal, ElementalType.Ice, ElementalType.Rock, ElementalType.Dark, ElementalType.Steel}},
+        {ElementalType.Poison, new ElementalType[]{ ElementalType.Grass}},
+        {ElementalType.Ground, new ElementalType[]{ ElementalType.Fire, ElementalType.Electric, ElementalType.Poison, ElementalType.Rock, ElementalType.Steel}},
+        {ElementalType.Flying, new ElementalType[]{ ElementalType.Grass, ElementalType.Fighting, ElementalType.Bug}},
+        {ElementalType.Psychic, new ElementalType[]{ ElementalType.Fighting, ElementalType.Poison}},
+        {ElementalType.Bug, new ElementalType[]{ ElementalType.Grass, ElementalType.Psychic, ElementalType.Dark}},
+        {ElementalType.Rock, new ElementalType[]{ ElementalType.Fire, ElementalType.Ice, ElementalType.Flying, ElementalType.Bug}},
+        {ElementalType.Ghost, new ElementalType[]{ ElementalType.Psychic, ElementalType.Ghost}},
+        {ElementalType.Dragon, new ElementalType[]{ ElementalType.Dragon}},
+        {ElementalType.Dark, new ElementalType[]{ ElementalType.Psychic, ElementalType.Ghost}},
+        {ElementalType.Steel, new ElementalType[]{ ElementalType.Ice, ElementalType.Rock}},
+        {ElementalType.Fairy, new ElementalType[]{ ElementalType.Fighting, ElementalType.Dark, ElementalType.Dragon}},
     };
 
     //WEAKATTACK
-    readonly Dictionary<Pokemon.PokemonType, Pokemon.PokemonType[]> weakAttack = new()
+    readonly Dictionary<ElementalType, ElementalType[]> weakAttack = new()
     {
-        {Pokemon.PokemonType.Normal, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Rock, Pokemon.PokemonType.Steel}}, //NORMAL > DARK = 0
-        {Pokemon.PokemonType.Fire, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Fire, Pokemon.PokemonType.Water, Pokemon.PokemonType.Rock, Pokemon.PokemonType.Dragon}},
-        {Pokemon.PokemonType.Water, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Water, Pokemon.PokemonType.Grass, Pokemon.PokemonType.Dragon}},
-        {Pokemon.PokemonType.Grass, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Fire, Pokemon.PokemonType.Grass, Pokemon.PokemonType.Poison, Pokemon.PokemonType.Flying, Pokemon.PokemonType.Bug, Pokemon.PokemonType.Dragon, Pokemon.PokemonType.Steel}},
-        {Pokemon.PokemonType.Electric, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Grass, Pokemon.PokemonType.Electric, Pokemon.PokemonType.Dragon}}, //ELECTRIK > GROUND = 0
-        {Pokemon.PokemonType.Ice, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Fire, Pokemon.PokemonType.Water, Pokemon.PokemonType.Ice, Pokemon.PokemonType.Steel}},
-        {Pokemon.PokemonType.Fighting, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Poison, Pokemon.PokemonType.Ground, Pokemon.PokemonType.Psychic, Pokemon.PokemonType.Poison}}, //FIGHTING > GHOST = 0  
-        {Pokemon.PokemonType.Poison, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Poison, Pokemon.PokemonType.Ground, Pokemon.PokemonType.Rock, Pokemon.PokemonType.Ghost}}, //POISON > STEEL = 0
-        {Pokemon.PokemonType.Ground, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Grass, Pokemon.PokemonType.Bug}}, //GROUND > FLYING = 0
-        {Pokemon.PokemonType.Flying, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Electric, Pokemon.PokemonType.Rock, Pokemon.PokemonType.Steel}},
-        {Pokemon.PokemonType.Psychic, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Psychic, Pokemon.PokemonType.Steel}}, //PSYCHIC > DARK = 0
-        {Pokemon.PokemonType.Bug, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Fire, Pokemon.PokemonType.Fighting, Pokemon.PokemonType.Poison, Pokemon.PokemonType.Flying, Pokemon.PokemonType.Ghost, Pokemon.PokemonType.Steel}},
-        {Pokemon.PokemonType.Rock, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Fighting, Pokemon.PokemonType.Flying, Pokemon.PokemonType.Steel}},
-        {Pokemon.PokemonType.Ghost, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Dark, Pokemon.PokemonType.Steel}}, //GHOST > NORMAL = 0
-        {Pokemon.PokemonType.Dragon, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Steel}},
-        {Pokemon.PokemonType.Dark, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Fighting, Pokemon.PokemonType.Dark, Pokemon.PokemonType.Steel}},
-        {Pokemon.PokemonType.Steel, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Fire, Pokemon.PokemonType.Water, Pokemon.PokemonType.Steel}},
-        {Pokemon.PokemonType.Fairy, new Pokemon.PokemonType[]{ Pokemon.PokemonType.Fire, Pokemon.PokemonType.Steel, Pokemon.PokemonType.Poison}},
+        {ElementalType.Normal, new ElementalType[]{ ElementalType.Rock, ElementalType.Steel}}, //NORMAL > DARK = 0
+        {ElementalType.Fire, new ElementalType[]{ ElementalType.Fire, ElementalType.Water, ElementalType.Rock, ElementalType.Dragon}},
+        {ElementalType.Water, new ElementalType[]{ ElementalType.Water, ElementalType.Grass, ElementalType.Dragon}},
+        {ElementalType.Grass, new ElementalType[]{ ElementalType.Fire, ElementalType.Grass, ElementalType.Poison, ElementalType.Flying, ElementalType.Bug, ElementalType.Dragon, ElementalType.Steel}},
+        {ElementalType.Electric, new ElementalType[]{ ElementalType.Grass, ElementalType.Electric, ElementalType.Dragon}}, //ELECTRIK > GROUND = 0
+        {ElementalType.Ice, new ElementalType[]{ ElementalType.Fire, ElementalType.Water, ElementalType.Ice, ElementalType.Steel}},
+        {ElementalType.Fighting, new ElementalType[]{ ElementalType.Poison, ElementalType.Ground, ElementalType.Psychic, ElementalType.Poison}}, //FIGHTING > GHOST = 0  
+        {ElementalType.Poison, new ElementalType[]{ ElementalType.Poison, ElementalType.Ground, ElementalType.Rock, ElementalType.Ghost}}, //POISON > STEEL = 0
+        {ElementalType.Ground, new ElementalType[]{ ElementalType.Grass, ElementalType.Bug}}, //GROUND > FLYING = 0
+        {ElementalType.Flying, new ElementalType[]{ ElementalType.Electric, ElementalType.Rock, ElementalType.Steel}},
+        {ElementalType.Psychic, new ElementalType[]{ ElementalType.Psychic, ElementalType.Steel}}, //PSYCHIC > DARK = 0
+        {ElementalType.Bug, new ElementalType[]{ ElementalType.Fire, ElementalType.Fighting, ElementalType.Poison, ElementalType.Flying, ElementalType.Ghost, ElementalType.Steel}},
+        {ElementalType.Rock, new ElementalType[]{ ElementalType.Fighting, ElementalType.Flying, ElementalType.Steel}},
+        {ElementalType.Ghost, new ElementalType[]{ ElementalType.Dark, ElementalType.Steel}}, //GHOST > NORMAL = 0
+        {ElementalType.Dragon, new ElementalType[]{ ElementalType.Steel}},
+        {ElementalType.Dark, new ElementalType[]{ ElementalType.Fighting, ElementalType.Dark, ElementalType.Steel}},
+        {ElementalType.Steel, new ElementalType[]{ ElementalType.Fire, ElementalType.Water, ElementalType.Steel}},
+        {ElementalType.Fairy, new ElementalType[]{ ElementalType.Fire, ElementalType.Steel, ElementalType.Poison}},
     };
 
-    public float DamageMultiplier(Pokemon.PokemonType sourceType, Pokemon.PokemonType[] targetType)
+    struct Type //DO THAT FOR EACH TYPE; IMPLEMENTATION?
+    {
+        ElementalType attackingType;
+        ElementalType[] effectiveType;
+        ElementalType[] weakType;
+        ElementalType nullifyingType;
+
+        public Type(ElementalType attackingType, ElementalType[] effectiveType, ElementalType[] weakType, ElementalType nullifyingType)
+        {
+            this.attackingType = attackingType;
+            this.effectiveType = effectiveType;
+            this.weakType = weakType;
+            this.nullifyingType = nullifyingType;
+        }
+    }
+
+
+    public float DamageMultiplier(ElementalType sourceType, ElementalType[] targetType)
     {
         float damageMultiplier = 1f;
-        if (sourceType != Pokemon.PokemonType.None)
+        if (sourceType != ElementalType.None)
         {
-            foreach (Pokemon.PokemonType type in targetType)
+            foreach (ElementalType type in targetType)
             {
                 if (effectiveAttack[sourceType].Contains(type))
                 {
                     damageMultiplier *= 2f;
                 }
             }
-            foreach (Pokemon.PokemonType type in targetType)
+            foreach (ElementalType type in targetType)
             {
                 if (weakAttack[sourceType].Contains(type))
                 {

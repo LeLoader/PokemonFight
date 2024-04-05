@@ -2752,6 +2752,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 651089091}
   m_CullTransparentMesh: 1
+--- !u!1 &674051674
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 674051676}
+  - component: {fileID: 674051675}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &674051675
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 674051674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b4df693d580dc3459c41d6e2818cb79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <SortedMove>k__BackingField: []
+  unsortedMove: []
+  movedb: {fileID: 11400000, guid: 1d0200401a2712e4a80e495f0b24b381, type: 2}
+--- !u!4 &674051676
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 674051674}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1164.217, y: 526.59106, z: 5.7576094}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &694357820
 GameObject:
   m_ObjectHideFlags: 0
@@ -5800,6 +5847,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 172ad6b37f4d54347b033dfa93e32f76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pokemon:
+    textureLink: 
+    moves: []
   name: 
   maxHealth: 
   attack: 
@@ -6829,6 +6879,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 172ad6b37f4d54347b033dfa93e32f76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pokemon:
+    textureLink: 
+    moves: []
   name: 
   maxHealth: 
   attack: 
@@ -8329,6 +8382,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 172ad6b37f4d54347b033dfa93e32f76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pokemon:
+    textureLink: 
+    moves: []
   name: 
   maxHealth: 
   attack: 
@@ -9292,7 +9348,7 @@ GameObject:
   - component: {fileID: 1805835463}
   - component: {fileID: 1805835462}
   m_Layer: 0
-  m_Name: PokemonData
+  m_Name: DATABASE
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9310,7 +9366,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23e93b27fcf383d4bbcaa19dc8a8cdb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fiche: {fileID: 2049917247}
+  <SortedPokemon>k__BackingField: []
   loadingScreen: {fileID: 1518853075}
   loadingLogText: {fileID: 726916269}
   pokeballLoading: {fileID: 6027613}
@@ -9322,8 +9378,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1805835461}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1078.4092, y: 572.6932, z: -4.1377034}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1078.4092, y: 572.6932, z: -4.137704}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9651,6 +9707,7 @@ MonoBehaviour:
   LoadAll: {fileID: 1512708486}
   gotoField: {fileID: 345318982}
   gotoPlaceholder: {fileID: 1582128724}
+  pokemonList: []
 --- !u!114 &2049917248
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10248,5 +10305,6 @@ SceneRoots:
   - {fileID: 1500672063}
   - {fileID: 2100782892}
   - {fileID: 355250838}
-  - {fileID: 1805835463}
   - {fileID: 1322191293}
+  - {fileID: 1805835463}
+  - {fileID: 674051676}

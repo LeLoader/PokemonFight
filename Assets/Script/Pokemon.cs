@@ -1,20 +1,20 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class Pokemon
+[Serializable]
+public class Pokemon : BaseData
 {
-    public int Id { get; set; }
     public int Level { get; set; } = 1;
-    public string Name { get; set; }
     public int CurrentHealth { get; set; }
     public Stats BaseStats { get; set; }
     public Stats ScaledStats { get; set; }
-    public enum PokemonType {None, Normal, Fire, Water, Electric, Grass, Ice, Fighting, Poison, Ground, Flying, Psychic, Bug, Rock, Ghost, Dragon, Dark, Steel, Fairy, Stellar};
-    PokemonType Type1;
-    PokemonType Type2;
+    ElementalType type1;
+    ElementalType type2;
     public string textureLink;
     public Texture Texture { get; set; }
+    public List<Move> moves = new();
 
 
     [Serializable]
@@ -37,9 +37,7 @@ public class Pokemon
         public int Speed { get; set; }
     }
 
-    
-
-    public Pokemon(int id, string name, int baseHealth, int attack, int defense, int spAttack, int spDefense, int speed, string texture, PokemonType type1, PokemonType type2 = PokemonType.None)
+    public Pokemon(int id, string name, int baseHealth, int attack, int defense, int spAttack, int spDefense, int speed, string texture, ElementalType type1, ElementalType type2 = ElementalType.None) : base (id, name)
     {
         Id = id;
         Name = name;
@@ -62,16 +60,16 @@ public class Pokemon
             Speed = ScaleToLevel(speed),
         };
         CurrentHealth = ScaledStats.Health;
-        Type1 = type1;
-        Type2 = type2;
+        this.type1 = type1;
+        this.type2 = type2;
         textureLink = texture;
         Texture = Resources.Load<Texture>("PokemonSprite/" + id.ToString("D3") + "MS");
         if (Resources.Load<Texture>("PokemonSprite/" + id.ToString("D3") + "MS") == null) Texture = Resources.Load<Texture>("PokemonSprite/000MS");
     }
 
-    public new PokemonType[] GetType()
+    public new ElementalType[] GetType()
     {
-        return new PokemonType[] {Type1, Type2};
+        return new ElementalType[] {type1, type2};
     }
 
     private int ScaleHealthToLevel(int baseHealth)

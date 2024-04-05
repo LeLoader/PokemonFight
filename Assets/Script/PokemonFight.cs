@@ -65,7 +65,7 @@ public class PokemonFight : MonoBehaviour
 
     private async void ChooseTwoPokemons()
     {
-        pokemonList = await PokemonList.Instance.LoadPokemons(10000);
+        pokemonList = await PokemonDatabase.Instance.LoadPokemons(10000);
         List<Pokemon> pokemonListModifiable = new(pokemonList);
         Pokemon pokemon1 = fichePokemon.GetComponent<PokemonFiche>().ActualPokemon;
         Pokemon pokemon2;
