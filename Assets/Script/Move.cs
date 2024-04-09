@@ -18,6 +18,7 @@ public class Move : BaseData
         ElementalType = elementalType;
     }
 
+    public string[] learnedByPokemons;
     int Accuracy { get; set; }
     int Power { get; set; }
     MoveType MoveType { get; set; }

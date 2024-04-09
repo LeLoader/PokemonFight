@@ -14,7 +14,7 @@ public class Pokemon : BaseData
     ElementalType type2;
     public string textureLink;
     public Texture Texture { get; set; }
-    public List<Move> moves = new();
+    public List<Move> learnedMoves = new();
 
 
     [Serializable]
