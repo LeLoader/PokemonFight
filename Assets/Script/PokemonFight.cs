@@ -114,9 +114,6 @@ public class PokemonFight : MonoBehaviour
             pokemon2 = pokemonListModifiable[rng];
             pokemon2.moves = FourRandomMoves(MoveDatabaseManager.Instance.GetMoveForPokemon(pokemon1));
             pokemon2.UpdateLevel(pokemon1.Level);
-            Debug.Log(pokemon1.Id);
-            Debug.Log(pokemon2.Id);
-            Debug.Log(pokemon2.Texture);
             if (pokemon1.ScaledStats.Speed >= pokemon2.ScaledStats.Speed)
             {
                 firstPokemon = pokemon1;
