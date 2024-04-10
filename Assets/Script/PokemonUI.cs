@@ -3,16 +3,13 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using UnityEngine.Networking;
 
 public class PokemonUI : MonoBehaviour
 {
     public Pokemon pokemon;
     [SerializeField] new string name;
-    [SerializeField] string maxHealth;
-    [SerializeField] string attack;
-    [SerializeField] string defense;
-    [SerializeField] string speed;
-    [SerializeField] ElementalType[] types;
+    [SerializeField] TextMeshProUGUI nameTMP;
     [SerializeField] GameObject healthBar;
     [SerializeField] Slider healthSlider;
     [SerializeField] RawImage pokemonImage;
@@ -23,60 +20,16 @@ public class PokemonUI : MonoBehaviour
     {
         ResetAll();
         this.pokemon = pokemon;
-        tmps = GetComponentsInChildren<TextMeshProUGUI>();
         pokemonImage.enabled = true;
         pokemonImage.texture = pokemon.Texture;
         yield return new WaitForSeconds(0.5f);
-        foreach (var tmp in tmps)
-        {
-            switch (tmp.name)
-            {
-                case "Name":
-                    name = pokemon.Name;
-                    tmp.text = name;
-                    yield return new WaitForSeconds(0.5f);
-                    break;
-
-                case "Health":
-                    maxHealth = pokemon.ScaledStats.Health.ToString();
-                    tmp.text = maxHealth;
-                    yield return new WaitForSeconds(0.5f);
-                    break;
-
-                case "Attack":
-                    attack = pokemon.ScaledStats.Attack.ToString();
-                    tmp.text = attack;
-                    yield return new WaitForSeconds(0.5f);
-                    break;
-
-                case "Defense":
-                    defense = pokemon.ScaledStats.Defense.ToString();
-                    tmp.text = defense;
-                    yield return new WaitForSeconds(0.5f);
-                    break;
-
-                case "Speed":
-                    speed = pokemon.ScaledStats.Speed.ToString();
-                    tmp.text = speed;
-                    yield return new WaitForSeconds(0.5f);
-                    break;
-
-                case "Types":
-                    types = pokemon.GetType();
-                    if (types[1] == ElementalType.None) tmp.text = types[0].ToString();
-                    else tmp.text = types[0].ToString() + ", " + types[1].ToString();
-                    yield return new WaitForSeconds(0.5f);
-                    break;
-            }
-        }
+        name = pokemon.Name;
+        nameTMP.text = name;
         yield return new WaitForSeconds(0.5f);
         healthBar.SetActive(true);
         healthSlider.value = pokemon.ScaledStats.Health;
         yield return new WaitForSeconds(1.5f);
-        foreach (TextMeshProUGUI tmp in tmps)
-        {
-            tmp.text = "";
-        }
+        nameTMP.text = "";
     }
 
     public void ResetAll()
@@ -86,7 +39,8 @@ public class PokemonUI : MonoBehaviour
         if (healthColorImage == null) healthColorImage = healthSlider.transform.Find("HealthBarImage").GetComponent<Image>();
         healthColorImage.color = Color.green;
         healthSlider.value = 1
-;    }
+;
+    }
 
     public void OnHealthChange(float health)
     {

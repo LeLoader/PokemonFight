@@ -6,6 +6,12 @@ using UnityEngine;
 [Serializable]
 public class Move : BaseData
 {
+    public string[] learnedByPokemons;
+    [field: SerializeField] public int Accuracy { get; set; }
+    [field: SerializeField] public int Power { get; set; }
+    [field: SerializeField] public MoveType MoveType { get; set; }
+    [field: SerializeField] public ElementalType ElementalType { get; set; }
+
     public Move(int id, string name, int? accuracy, int? power, MoveType moveType, ElementalType elementalType) : base(id, name)
     {
         Id = id;
@@ -17,10 +23,4 @@ public class Move : BaseData
         MoveType = moveType;
         ElementalType = elementalType;
     }
-
-    public string[] learnedByPokemons;
-    int Accuracy { get; set; }
-    int Power { get; set; }
-    MoveType MoveType { get; set; }
-    ElementalType ElementalType { get; set; }
 }

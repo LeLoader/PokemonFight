@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class PokemonFiche : MonoBehaviour
 {
+    public static PokemonFiche Instance { get; private set; }
     [SerializeField] RawImage pokemonImage;
     [SerializeField] TextMeshProUGUI pokemonName;
     [SerializeField] TextMeshProUGUI pokemonLevel;
@@ -22,9 +23,6 @@ public class PokemonFiche : MonoBehaviour
     [SerializeField] Button ButtonPlus1;
     [SerializeField] Button ButtonPlus5;
     [SerializeField] Button ButtonPlus10;
-    [SerializeField] Button Load10;
-    [SerializeField] Button Load100;
-    [SerializeField] Button LoadAll;
     [SerializeField] TMP_InputField gotoField;
     [SerializeField] TextMeshProUGUI gotoPlaceholder;
     public List<Pokemon> pokemonList;
@@ -34,22 +32,25 @@ public class PokemonFiche : MonoBehaviour
 
     void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            Instance = this;
+        }
+
         ButtonMinus1.onClick.AddListener(delegate { RemoveLevel(1); });
         ButtonMinus5.onClick.AddListener(delegate { RemoveLevel(5); });
         ButtonMinus10.onClick.AddListener(delegate { RemoveLevel(10); });
         ButtonPlus1.onClick.AddListener(delegate { AddLevel(1); });
         ButtonPlus5.onClick.AddListener(delegate { AddLevel(5); });
         ButtonPlus10.onClick.AddListener(delegate { AddLevel(10); });
-        Load10.onClick.AddListener(delegate { LoadPokemon(10); });
-        Load100.onClick.AddListener(delegate { LoadPokemon(100); });
-        LoadAll.onClick.AddListener(delegate { LoadPokemon(10000); });
     }
 
-    public async void LoadPokemon(int howMany)
+    public void Setup()
     {
-        
-        Load10.transform.parent.transform.parent.gameObject.SetActive(false);
-        pokemonList = await PokemonDatabaseManager.Instance.LoadPokemons(howMany);
         CheckPage();
         gotoPlaceholder.text = $"Enter ID (1 - {pokemonList.Count})";
         GetAndSetPokemon(0);
@@ -119,7 +120,7 @@ public class PokemonFiche : MonoBehaviour
     }
     public void UpdatePokemonLevel()
     {
-        if(ActualPokemon.Level != currentLevel) ActualPokemon.UpdateLevel(currentLevel);
+        if (ActualPokemon.Level != currentLevel) ActualPokemon.UpdateLevel(currentLevel);
     }
 
     public void AddLevel(int level)
@@ -148,4 +149,6 @@ public class PokemonFiche : MonoBehaviour
         pokemonSpAttack.text = $"SpAttack: {ActualPokemon.ScaledStats.SpAttack} ({ActualPokemon.BaseStats.SpAttack})";
         pokemonSpDefense.text = $"SpDefense: {ActualPokemon.ScaledStats.SpDefense} ({ActualPokemon.BaseStats.SpDefense})";
     }
+
+
 }

@@ -9,17 +9,21 @@ using Unity.VisualScripting;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Threading;
+using UnityEngine.Networking;
 
-public class PokemonDatabaseManager : MonoBehaviour
+public class PokemonDatabaseManager : MonoBehaviour, ILogger
 {
     public static PokemonDatabaseManager Instance { get; private set; }
-    [SerializeField] private PokemonDatabase pokemondb;
-    private List<Pokemon> unsortedPokemon = new();
-    [field: SerializeField] public List<Pokemon> SortedPokemon { get; private set; } = new();
+    [SerializeField] public PokemonDatabase pokemondb;
+    public List<Pokemon> unsortedPokemon = new();
+    [field: SerializeField] public List<Pokemon> SortedPokemon { get; set; } = new();
     [SerializeField] GameObject loadingScreen;
     [SerializeField] TextMeshProUGUI loadingLogText;
+    string log;
     [SerializeField] Image pokeballLoading;
-    int errorCount;
+    [SerializeField] int errorCount;
+    [SerializeField] public PokemonFight pokemonFight;
 
     void Awake()
     {
@@ -33,6 +37,11 @@ public class PokemonDatabaseManager : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (loadingLogText.text != log || log != "") loadingLogText.text = log; ;
+    }
+
     /// <summary>
     /// Async function that will download a certain number of pokemon on https://pokeapi.co/api/v2
     /// </summary>
@@ -42,12 +51,8 @@ public class PokemonDatabaseManager : MonoBehaviour
     {
         //Debug.Log("Entering LoadPokemons");
         pokeballLoading.gameObject.SetActive(true);
-        if (SortedPokemon.Count > 0)
-        {
-            pokeballLoading.gameObject.SetActive(false);
-            return SortedPokemon;
-        }
         var pokemons = await DownloadLinks(howMany);
+        pokemondb.pokemons = pokemons;
         pokeballLoading.transform.rotation = new Quaternion(0, 0, 0, 0);
         return pokemons;
     }
@@ -58,15 +63,21 @@ public class PokemonDatabaseManager : MonoBehaviour
         using WebClient client = new();
         string json = await client.DownloadStringTaskAsync(new Uri("https://pokeapi.co/api/v2/pokemon?limit=" + howMany));
         PokemonJsonRoot pokemonJsonRoot = JsonConvert.DeserializeObject<PokemonJsonRoot>(json);
-        float lerpedValue = 0f;
+        Debug.Log($"Found {SortedPokemon.Count} pokemons locally, and found {pokemonJsonRoot.results.Length} pokemons online");
+        if (pokemonJsonRoot.results.Length == pokemondb.pokemons.Count) //if number of found moves = already loaded moves, then skip
+        {
+            Debug.Log("Same number of pokemons, skipping download");
+            StartCoroutine(FadeLoadingScreen());
+            return SortedPokemon;
+        }
         for (int i = 0; i < pokemonJsonRoot.results.Length; i++)
         {
             await GetPokemon(pokemonJsonRoot.results[i].url);
-            lerpedValue = i / (float)(pokemonJsonRoot.results.Length - 1);
-            pokeballLoading.transform.Rotate(new Vector3(0, 0, 360 / (float)pokemonJsonRoot.results.Length));
         }
+        log = $"Loaded {pokemonJsonRoot.results.Length - errorCount}/{pokemonJsonRoot.results.Length} pokemons";
+        Debug.Log("All tasks done, sorting..");
         SortedPokemon = unsortedPokemon.OrderBy(x => x.Id).ToList();
-        loadingLogText.text = $"Loaded {pokemonJsonRoot.results.Length - errorCount}/{pokemonJsonRoot.results.Length} pokemons";
+        Debug.Log("Sorted!");
         StartCoroutine(FadeLoadingScreen());
         //Debug.Log("Exiting DownloadLinks");
         return SortedPokemon;
@@ -74,13 +85,13 @@ public class PokemonDatabaseManager : MonoBehaviour
 
     async Task GetPokemon(string url)
     {
-        //Debug.Log("Entering GetPokemon");
+        //Debug.Log("Entering GetPokemon");     
         using WebClient client = new();
         try
         {
             string json = await client.DownloadStringTaskAsync(new Uri(url));
             PokemonJson tempPokemon = JsonConvert.DeserializeObject<PokemonJson>(json);
-            loadingLogText.text = $"Downloaded {tempPokemon.name.FirstCharacterToUpper()}";
+            log = $"Downloaded {tempPokemon.name.FirstCharacterToUpper()}";
             if (tempPokemon.types.Length == 1) tempPokemon.types = new Types[2] { tempPokemon.types[0], new(2, new Type { name = "None" }) };
             Pokemon pokemon = new(tempPokemon.id,
                                   tempPokemon.name.FirstCharacterToUpper(),
@@ -90,19 +101,23 @@ public class PokemonDatabaseManager : MonoBehaviour
                                   tempPokemon.stats[3].base_stat,
                                   tempPokemon.stats[4].base_stat,
                                   tempPokemon.stats[5].base_stat,
-                                  tempPokemon.sprites.front_default,
                                   Enum.Parse<ElementalType>(tempPokemon.types[0].type.name.FirstCharacterToUpper()),
                                   Enum.Parse<ElementalType>(tempPokemon.types[1].type.name.FirstCharacterToUpper()));
             unsortedPokemon.Add(pokemon);
-            var query = MoveDatabaseManager.Instance.movedb.moves?.Where(move => move.learnedByPokemons.Contains(pokemon.Name));
-            foreach(var move in query) pokemon.learnedMoves.Add(move);
             //Debug.Log("Exiting GetPokemon");
+            return;
         }
         catch (WebException e)
         {
             errorCount++;
             Debug.LogException(e);
-            loadingLogText.text = $"Error while downloading at {url}";
+            log = $"Error while downloading at {url}";
+        }
+        catch (Exception e)
+        {
+            errorCount++;
+            Debug.LogException(e);
+            return;
         }
     }
 

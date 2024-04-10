@@ -10,24 +10,41 @@ using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
+using System.Reflection;
 
-public class MoveDatabaseManager : MonoBehaviour
+public class MoveDatabaseManager : MonoBehaviour, ILogger
 {
-    public static MoveDatabaseManager Instance { get; private set; }
-    [field: SerializeField] public List<Move> SortedMove { get; private set; } = new();
-    [SerializeField] private List<Move> unsortedMove = new();
     [SerializeField] public MoveDatabase movedb;
+    public static MoveDatabaseManager Instance { get; private set; }
+    [field: SerializeField] public List<Move> SortedMove { get; set; } = new();
+    [SerializeField] private List<Move> unsortedMove = new();
     [SerializeField] TextMeshProUGUI loadingLogText;
-    int errorCount;
-    private async void Start()
+    string log;
+    [SerializeField] int errorCount;
+
+    private void Awake()
     {
-        //.moves.Clear(); uncomment to clear (UI will be froze during DL, unlucky)
-        movedb.moves = await LoadMoves(919); //919 ignore weird moves (shadow stuff from other game)
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            Instance = this;
+        }
     }
+
+    private void Update()
+    {
+        if (loadingLogText.text != log || log != "") loadingLogText.text = log;
+    }
+
     public async Task<List<Move>> LoadMoves(int howMany)
     {
         //Debug.Log("Entering LoadMoves");
+
         var moves = await DownloadLinks(howMany);
+        movedb.moves = moves;
         return moves;
     }
 
@@ -37,18 +54,17 @@ public class MoveDatabaseManager : MonoBehaviour
         using WebClient client = new();
         string json = await client.DownloadStringTaskAsync(new Uri("https://pokeapi.co/api/v2/move?limit=" + howMany));
         MoveJsonRoot moveJsonRoot = JsonConvert.DeserializeObject<MoveJsonRoot>(json);
-        List<Task> tasks = new();
+        Debug.Log($"Found {SortedMove.Count} moves locally, and found {moveJsonRoot.results.Length} moves online");
         if (moveJsonRoot.results.Length == movedb.moves.Count) //if number of found moves = already loaded moves, then skip (always true as you always download 919 moves)
         {
             Debug.Log("Same number of moves, skipping download");
-            return movedb.moves;
+            return SortedMove;
         }
         for (int i = 0; i < moveJsonRoot.results.Length; i++)
         {
-            tasks.Add(Task.Run(() => GetMove(moveJsonRoot.results[i].url)));
-            Debug.Log(i);
+            await GetMove(moveJsonRoot.results[i].url);
         }
-        Task.WaitAll(tasks.ToArray());
+        log = $"Loaded {moveJsonRoot.results.Length - errorCount}/{moveJsonRoot.results.Length} moves";
         Debug.Log("All tasks done, sorting..");
         SortedMove = unsortedMove.OrderBy(x => x.Id).ToList();
         Debug.Log("Sorted!");
@@ -59,16 +75,21 @@ public class MoveDatabaseManager : MonoBehaviour
     async Task GetMove(string url)
     {
         //Debug.Log("Entering GetMove");
-        //Debug.Log($"Started: Thread {Thread.CurrentThread.ManagedThreadId} - Id {url.Split('/')[6]}");
         using WebClient client = new();
         try
         {
             string json = await client.DownloadStringTaskAsync(new Uri(url));
             MoveJson tempMove = JsonConvert.DeserializeObject<MoveJson>(json);
+            log = $"Downloaded {tempMove.name.FirstCharacterToUpper()}";
             tempMove.accuracy ??= 100;
             tempMove.power ??= 0;
-            if (tempMove.type.name == "status") return;
-            //loadingLogText.text = $"Downloaded {tempMove.name.FirstCharacterToUpper()}";
+            if (tempMove.damage_class.name == "status") //REMOVE STATUS MOVE SINCE POWER 0 IS USELESS IS THIS GAMEMODE
+            {
+                Debug.Log(tempMove.name + " " + tempMove.damage_class.name);
+                return;
+            }
+            if (tempMove.power == 0) return; //REMOVE POWER 0 SINCE IT'S USELESS IS THIS GAMEMODE
+            if (tempMove.target.name != "selected-pokemon") return; //REMOVE MOVE THAT TARGET SOMETHING ELSE THAN ENEMY (NOT SURE)
             Move move = new(tempMove.id,
                             tempMove.name,
                             tempMove.accuracy,
@@ -82,15 +103,14 @@ public class MoveDatabaseManager : MonoBehaviour
             {
                 move.learnedByPokemons[i] = tempMove.learned_by_pokemon[i].name;
             }
-            //Debug.Log($"Ended: Thread {Thread.CurrentThread.ManagedThreadId} - Id {url.Split('/')[6]}");
-            return;
             //Debug.Log("Exiting GetMove");
+            return;
         }
         catch (WebException e)
         {
             errorCount++;
             Debug.LogException(e);
-            loadingLogText.text = $"Error while downloading at {url}";
+            log = $"Error while downloading at {url}";
             return;
         }
         catch (Exception e)
@@ -98,6 +118,12 @@ public class MoveDatabaseManager : MonoBehaviour
             Debug.LogException(e);
             return;
         }
+    }
+
+    public List<Move> GetMoveForPokemon(Pokemon pokemon)
+    {
+        var query = movedb.moves.Where((move) => move.learnedByPokemons.Contains(pokemon.Name.ToLower()));
+        return query.ToList();
     }
 }
 
@@ -129,7 +155,6 @@ public class Learned_by_pokemon
 {
     public string name { get; set; }
 }
-
 public class MoveJson
 {
     public int id { get; set; }
